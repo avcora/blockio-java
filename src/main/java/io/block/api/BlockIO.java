@@ -18,6 +18,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.text.NumberFormat;
 import java.util.*;
@@ -137,8 +138,8 @@ public class BlockIO {
      * @return A {@link io.block.api.model.Withdrawal} object containing information about the sent transaction.
      * @throws BlockIOException
      */
-    public Withdrawal withdrawToAddress(String address, double amount, String secretPin) throws BlockIOException {
-        HashMap<String, Double> target = new HashMap<String, Double>(1);
+    public Withdrawal withdrawToAddress(String address, BigDecimal amount, String secretPin) throws BlockIOException {
+        HashMap<String, BigDecimal> target = new HashMap<String, BigDecimal>(1);
         target.put(address, amount);
         return withdraw(null, null, target, ParamType.ADDRS, secretPin);
     }
@@ -156,7 +157,7 @@ public class BlockIO {
      * @return A {@link io.block.api.model.Withdrawal} object containing information about the sent transaction.
      * @throws BlockIOException
      */
-    public Withdrawal withdraw(String[] sources, ParamType sourceType, Map<String, Double> targetsAndAmounts, ParamType targetType, String secretPin) throws BlockIOException {
+    public Withdrawal withdraw(String[] sources, ParamType sourceType, Map<String, BigDecimal> targetsAndAmounts, ParamType targetType, String secretPin) throws BlockIOException {
         if (targetsAndAmounts == null || targetsAndAmounts.size() == 0) {
             throw new IllegalArgumentException("You have to provide between one and 100 pair(s) of targets and amounts to withdraw to");
         }
@@ -194,11 +195,15 @@ public class BlockIO {
         return finalizeWithdrawal(signRequest, secretPin);
     }
 
-    private HashMap<String, String> setupWithdrawalParams(Map<String, Double> addrsAndAmounts, ParamType targetType) throws BlockIOException {
+    private HashMap<String, String> setupWithdrawalParams(Map<String, BigDecimal> addrsAndAmounts, ParamType targetType) throws BlockIOException {
         String addrsParamString = "";
         String amountsParamString = "";
+
         NumberFormat nf = NumberFormat.getNumberInstance(Locale.US); // This will force '.' as decimal separator
-        for (Map.Entry<String, Double> entry: addrsAndAmounts.entrySet()) {
+        nf.setMinimumFractionDigits(8);
+        nf.setMaximumFractionDigits(8);
+
+        for (Map.Entry<String, BigDecimal> entry: addrsAndAmounts.entrySet()) {
             addrsParamString += entry.getKey() + ",";
             amountsParamString +=  nf.format(entry.getValue()) + ",";
         }
