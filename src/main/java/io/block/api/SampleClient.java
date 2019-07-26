@@ -6,6 +6,7 @@ import io.block.api.model.Prices;
 import io.block.api.model.Withdrawal;
 import io.block.api.utils.BlockIOException;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class SampleClient {
@@ -18,7 +19,7 @@ public class SampleClient {
             AccountBalance balance = api.getAccountBalance();
             System.out.println("Balance for account " + balance.network
                     + ": Confirmed: " + balance.availableBalance
-                    + " Pendning: " + balance.pedingReceivedBalance);
+                    + " Pendning: " + balance.pendingReceivedBalance);
             System.out.println();
 
             Prices prices = api.getPrices("");
@@ -31,7 +32,7 @@ public class SampleClient {
             }
             System.out.println();
 
-            Withdrawal withdrawal = api.withdrawToAddress("A7SvospFu3jG84LX2rTUuTFNHs7efZna3Y", 50d, "!!! YOUR SECRET PIN HERE !!!");
+            Withdrawal withdrawal = api.withdrawToAddress("A7SvospFu3jG84LX2rTUuTFNHs7efZna3Y", BigDecimal.valueOf(50d), "!!! YOUR SECRET PIN HERE !!!");
             System.out.println("Withdrawal done. Transaction ID: " + withdrawal.txid
                 + " Amount withdrawn: " + withdrawal.amountWithdrawn
                 + " Amount sent: " + withdrawal.amountSent
