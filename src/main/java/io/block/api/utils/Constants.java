@@ -11,6 +11,7 @@ public class Constants {
         public static final String GET_MY_ADDRESSES = "get_my_addresses";
         public static final String GET_ADDR_BALANCE = "get_address_balance";
         public static final String GET_ADDR_BY_LABEL = "get_address_by_label";
+        public static final String GET_RAW_TX = "get_raw_transaction";
 
         public static final String WITHDRAW_FROM_ANY = "withdraw";
         public static final String WITHDRAW_FROM_LABELS = "withdraw_from_labels";
@@ -45,6 +46,7 @@ public class Constants {
         public static final String TYPE = "type";
         public static final String BEFORE_TX = "before_tx";
         public static final String USER_IDS = "user_ids";
+        public static final String TX_ID = "txid";
 
     }
 

@@ -65,6 +65,11 @@ public class Response {
         public io.block.api.model.TransactionsSent transactionsSent;
     }
 
+    public class ResponseRawTransaction extends Response {
+        @SerializedName("data")
+        public io.block.api.model.RawTransaction rawTransaction;
+    }
+
     public class ResponseError extends Response {
         @SerializedName("data")
         public io.block.api.model.Error error;

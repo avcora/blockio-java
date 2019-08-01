@@ -14,6 +14,7 @@ public class TransactionReceived {
     public long time;
     public int confirmations;
 
+    @SerializedName("amounts_received")
     public List<Amount> amountsReceived;
     public List<String> senders;
 

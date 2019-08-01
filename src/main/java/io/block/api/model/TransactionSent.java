@@ -17,6 +17,7 @@ public class TransactionSent {
     @SerializedName("total_amount_sent")
     public String totalAmountSent;
 
+    @SerializedName("amounts_sent")
     public List<Amount> amountsSent;
     public List<String> senders;
 

@@ -1,8 +1,8 @@
 package io.block.api.utils;
 
-import io.block.api.model.Input;
 import io.block.api.model.Signer;
 import io.block.api.model.WithdrawSignRequest;
+import io.block.api.model.WithdrawSignRequestInput;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.DERSequenceGenerator;
 import org.bouncycastle.asn1.sec.SECNamedCurves;
@@ -36,7 +36,7 @@ public class SigningUtils {
             pinToKey(secretPin));
 
         byte[] generatedPubKey = SigningUtils.derivePublicKey(privKey);
-        for (Input input : request.inputs) {
+        for (WithdrawSignRequestInput input : request.inputs) {
             for (Signer signer : input.signers) {
                 if (Arrays.equals(generatedPubKey, SigningUtils.fromHex(signer.signerPubKey))) {
                     signer.signedData = signData(input.dataToSign, privKey);

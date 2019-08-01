@@ -385,6 +385,16 @@ public class BlockIO {
         return (TransactionsSent) abstractTransactionRequest(userIDs, Constants.Params.USER_IDS, beforeTX, Constants.Values.TYPE_SENT);
     }
 
+    public RawTransaction getRawTransaction(String txid) throws BlockIOException
+    {
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put(Constants.Params.TX_ID, txid);
+        Response.ResponseRawTransaction response = (Response.ResponseRawTransaction)
+                doApiCall(Constants.Methods.GET_RAW_TX, params, Response.ResponseRawTransaction.class);
+
+        return response.rawTransaction;
+    }
+
     private Object abstractTransactionRequest(String[] whatFor, String typeOfParams, String beforeTx, String type) throws BlockIOException {
         HashMap<String, String> params = new HashMap<String, String>();
         params.put(Constants.Params.TYPE, type);

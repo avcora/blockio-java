@@ -11,7 +11,7 @@ public class WithdrawSignRequest {
     @SerializedName("more_signatures_needed")
     public boolean moreSigsNeeded;
 
-    public List<Input> inputs;
+    public List<WithdrawSignRequestInput> inputs;
 
     @SerializedName("encrypted_passphrase")
     public EncryptedPassphrase encryptedPassphrase;
