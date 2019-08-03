@@ -13,3 +13,7 @@ hs_err_pid*
 .idea/
 docs/
 target/
+blockio.iml
+
+# Main
+src/main/java/io/block/api/Main.java

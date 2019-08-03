@@ -47,6 +47,7 @@ public class Constants {
         public static final String BEFORE_TX = "before_tx";
         public static final String USER_IDS = "user_ids";
         public static final String TX_ID = "txid";
+        public static final String PRIORITY = "priority";
 
     }
 

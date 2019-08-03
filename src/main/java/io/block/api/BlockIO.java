@@ -27,6 +27,10 @@ public class BlockIO {
 
     private String apiKey;
 
+    public enum Priority{
+        LOW, MEDIUM, HIGH
+    }
+
     private enum ParamType{
         ADDRS, LABELS, USERIDS
     }
@@ -139,9 +143,13 @@ public class BlockIO {
      * @throws BlockIOException
      */
     public Withdrawal withdrawToAddress(String address, BigDecimal amount, String secretPin) throws BlockIOException {
+        return withdrawToAddress(address, amount, secretPin, Priority.MEDIUM);
+    }
+
+    public Withdrawal withdrawToAddress(String address, BigDecimal amount, String secretPin, Priority priority) throws BlockIOException {
         HashMap<String, BigDecimal> target = new HashMap<String, BigDecimal>(1);
         target.put(address, amount);
-        return withdraw(null, null, target, ParamType.ADDRS, secretPin);
+        return withdraw(null, null, target, ParamType.ADDRS, secretPin, priority);
     }
 
     /**
@@ -157,7 +165,7 @@ public class BlockIO {
      * @return A {@link io.block.api.model.Withdrawal} object containing information about the sent transaction.
      * @throws BlockIOException
      */
-    public Withdrawal withdraw(String[] sources, ParamType sourceType, Map<String, BigDecimal> targetsAndAmounts, ParamType targetType, String secretPin) throws BlockIOException {
+    public Withdrawal withdraw(String[] sources, ParamType sourceType, Map<String, BigDecimal> targetsAndAmounts, ParamType targetType, String secretPin, Priority priority) throws BlockIOException {
         if (targetsAndAmounts == null || targetsAndAmounts.size() == 0) {
             throw new IllegalArgumentException("You have to provide between one and 100 pair(s) of targets and amounts to withdraw to");
         }
@@ -166,7 +174,12 @@ public class BlockIO {
             throw new IllegalArgumentException("You have to provide your secret pin with withdrawals");
         }
 
+        if (priority == null) {
+            throw new IllegalArgumentException("param 'priority' is null");
+        }
+
         HashMap<String, String> params = setupWithdrawalParams(targetsAndAmounts, targetType);
+        params.put(Constants.Params.PRIORITY, priority.toString().toLowerCase());
 
         String method = Constants.Methods.WITHDRAW_FROM_ANY;
         if (sources != null && sources.length > 0) {
