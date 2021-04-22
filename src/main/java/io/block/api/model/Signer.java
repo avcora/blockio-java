@@ -11,4 +11,11 @@ public class Signer {
 
     @SerializedName("signed_data")
     public String signedData;
+
+    @Override
+    public String toString() {
+        return "Signer{" + "signerAddress=" + signerAddress + ", signerPubKey=" + signerPubKey + ", signedData=" + signedData + '}';
+    }
+
+    
 }

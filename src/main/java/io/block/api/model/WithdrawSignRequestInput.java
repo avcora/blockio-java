@@ -16,4 +16,11 @@ public class WithdrawSignRequestInput
     public String dataToSign;
 
     public List<Signer> signers;
+
+    @Override
+    public String toString() {
+        return "WithdrawSignRequestInput{" + "inputNo=" + inputNo + ", sigsNeeded=" + sigsNeeded + ", dataToSign=" + dataToSign + ", signers=" + signers + '}';
+    }
+    
+    
 }

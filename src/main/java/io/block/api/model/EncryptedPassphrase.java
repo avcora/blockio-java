@@ -10,4 +10,9 @@ public class EncryptedPassphrase {
     public String signerPubKey;
 
     public String passphrase;
+
+    @Override
+    public String toString() {
+        return "EncryptedPassphrase{" + "signerAddress=" + signerAddress + ", signerPubKey=" + signerPubKey + ", passphrase=" + passphrase + '}';
+    }
 }

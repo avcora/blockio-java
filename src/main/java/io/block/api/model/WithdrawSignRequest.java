@@ -15,4 +15,11 @@ public class WithdrawSignRequest {
 
     @SerializedName("encrypted_passphrase")
     public EncryptedPassphrase encryptedPassphrase;
+
+    @Override
+    public String toString() {
+        return "WithdrawSignRequest{" + "referenceID=" + referenceID + ", moreSigsNeeded=" + moreSigsNeeded + ", inputs=" + inputs + ", encryptedPassphrase=" + encryptedPassphrase + '}';
+    }
+    
+    
 }

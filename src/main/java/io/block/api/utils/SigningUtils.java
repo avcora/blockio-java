@@ -20,21 +20,21 @@ import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.signers.ECDSASigner;
 import org.bouncycastle.crypto.signers.HMacDSAKCalculator;
 import org.bouncycastle.util.encoders.Base64;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.util.Arrays;
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
 
 public class SigningUtils {
 
-    public static WithdrawSignRequest signWithdrawalRequest(WithdrawSignRequest request, String secretPin) throws BlockIOException {
-
+    public static WithdrawSignRequest signWithdrawalRequest(WithdrawSignRequest request, String secretPin) throws BlockIOException {        
         byte[] privKey = getPrivKeyFromPassphrase(
             Base64.decode(request.encryptedPassphrase.passphrase),
             pinToKey(secretPin));
-
+        
         byte[] generatedPubKey = SigningUtils.derivePublicKey(privKey);
         for (WithdrawSignRequestInput input : request.inputs) {
             for (Signer signer : input.signers) {
@@ -52,7 +52,7 @@ public class SigningUtils {
      * @param pin Secret PIN
      * @return AES key for next steps
      */
-    static byte[] pinToKey(String pin) {
+    public static byte[] pinToKey(String pin) {
         int iterations = 1024;
         byte[] pinBytes = PBEParametersGenerator.PKCS5PasswordToUTF8Bytes(pin.toCharArray());
         byte[] salt = PBEParametersGenerator.PKCS5PasswordToUTF8Bytes("".toCharArray());
@@ -69,7 +69,7 @@ public class SigningUtils {
 
         return params.getKey();
     }
-
+    
     /**
      * Steps (4) to (7): Decrypt passphrase with secret key
      * @param pass passphrase from withdrawal request
@@ -77,15 +77,16 @@ public class SigningUtils {
      * @return decrypted passphrase for next steps
      * @throws BlockIOException
      */
-    static byte[] decryptPassphrase(byte[] pass, byte[] key) throws BlockIOException {
-        PaddedBufferedBlockCipher aes = new PaddedBufferedBlockCipher(new AESEngine());
-        CipherParameters aesKey = new KeyParameter(key);
-        aes.init(false, aesKey);
+    public static byte[] decryptPassphrase(byte[] pass, byte[] encryptionKey) throws BlockIOException {
+        
         try {
-            return cipherData(aes, pass);
-        } catch (InvalidCipherTextException e) {
-            throw new BlockIOException("Unexpected error while signing transaction. Please file an issue report.");
-        }
+            SecretKeySpec key = new SecretKeySpec(encryptionKey, "AES");
+            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5PADDING");
+            cipher.init(Cipher.DECRYPT_MODE, key);
+            return cipher.doFinal(pass);
+        } catch (Exception e) {
+            throw new BlockIOException("Unexpected error while signing transaction, possibly bad key! Please file an issue report.");
+        } 
     }
 
     /**
@@ -112,7 +113,7 @@ public class SigningUtils {
      * @return encrypted passphrase
      * @throws BlockIOException
      */
-    static byte[] encryptPassphrase(String plain, byte[] key) throws BlockIOException {
+    public static byte[] encryptPassphrase(String plain, byte[] key) throws BlockIOException {
         PaddedBufferedBlockCipher aes = new PaddedBufferedBlockCipher(new AESEngine());
         CipherParameters aesKey = new KeyParameter(key);
         aes.init(true, aesKey);
@@ -125,7 +126,7 @@ public class SigningUtils {
         }
     }
 
-    static byte[] cipherData(PaddedBufferedBlockCipher cipher, byte[] data) throws InvalidCipherTextException {
+    public static byte[] cipherData(PaddedBufferedBlockCipher cipher, byte[] data) throws InvalidCipherTextException {
         int minSize = cipher.getOutputSize(data.length);
         byte[] outBuf = new byte[minSize];
         int length1 = cipher.processBytes(data, 0, data.length, outBuf, 0);
@@ -141,7 +142,7 @@ public class SigningUtils {
      * @param passphrase
      * @return
      */
-    static byte[] getPrivKey(byte[] passphrase) {
+    public static byte[] getPrivKey(byte[] passphrase) {
         SHA256Digest digest = new SHA256Digest();
         byte [] privBytes = new byte[digest.getDigestSize()];
         digest.update(passphrase, 0, passphrase.length);
@@ -155,7 +156,7 @@ public class SigningUtils {
      * @return
      * @throws BlockIOException
      */
-    static byte[] derivePublicKey(byte[] privBytes) throws BlockIOException {
+    public static byte[] derivePublicKey(byte[] privBytes) throws BlockIOException {
         X9ECParameters params = SECNamedCurves.getByName("secp256k1");
         ECDomainParameters ecParams = new ECDomainParameters(params.getCurve(), params.getG(), params.getN(),  params.getH());
         BigInteger priv = new BigInteger(1, privBytes);
@@ -165,7 +166,7 @@ public class SigningUtils {
     }
 
 
-    static String signData(String input, byte[] key) throws BlockIOException {
+    public static String signData(String input, byte[] key) throws BlockIOException {
         ECDSASigner signer = new ECDSASigner(new HMacDSAKCalculator(new SHA256Digest()));
         X9ECParameters params = SECNamedCurves.getByName("secp256k1");
         ECDomainParameters ecParams = new ECDomainParameters(params.getCurve(), params.getG(), params.getN(), params.getH());
@@ -201,7 +202,7 @@ public class SigningUtils {
      * @param array input bytes
      * @return hex string
      */
-    static String toHex(byte[] array)
+    public static String toHex(byte[] array)
     {
         BigInteger bi = new BigInteger(1, array);
         String hex = bi.toString(16);
@@ -218,13 +219,14 @@ public class SigningUtils {
      * @param s hex string
      * @return byte array
      */
-    static byte[] fromHex(String s) {
+    public static byte[] fromHex(String s) {
         int len = s.length();
         byte[] data = new byte[len / 2];
         for (int i = 0; i < len; i += 2) {
             data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
                     + Character.digit(s.charAt(i+1), 16));
         }
+        
         return data;
     }
 }

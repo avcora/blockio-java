@@ -12,6 +12,7 @@ public class Constants {
         public static final String GET_ADDR_BALANCE = "get_address_balance";
         public static final String GET_ADDR_BY_LABEL = "get_address_by_label";
         public static final String GET_RAW_TX = "get_raw_transaction";
+        public static final String GET_NETWORK_FEE_ESTIMATE = "get_network_fee_estimate";
 
         public static final String WITHDRAW_FROM_ANY = "withdraw";
         public static final String WITHDRAW_FROM_LABELS = "withdraw_from_labels";

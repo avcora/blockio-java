@@ -11,6 +11,11 @@
     <description>Java API wrapper for http://block.io</description>
     <url>https://github.com/langerhans/blockio-java</url>
 
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+
     <issueManagement>
         <system>GitHub</system>
         <url>https://github.com/langerhans/blockio-java/issues</url>

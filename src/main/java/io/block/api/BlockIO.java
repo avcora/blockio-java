@@ -31,7 +31,7 @@ public class BlockIO {
         LOW, MEDIUM, HIGH
     }
 
-    private enum ParamType{
+    public enum ParamType{
         ADDRS, LABELS, USERIDS
     }
 
@@ -132,6 +132,41 @@ public class BlockIO {
 
         Response.ResponseAddressByLabel response = (Response.ResponseAddressByLabel) doApiCall(Constants.Methods.GET_ADDR_BY_LABEL, params, Response.ResponseAddressByLabel.class);
         return response.addressByLabel;
+    }
+    
+    /**
+     * Convenience method for a single address fee estimate
+     * @param address Target address
+     * @param amount Amount to withdraw
+     * @param priority Transaction priority LOW, MEDIUM, HIGH
+     * @return A {@link io.block.api.model.NetworkFeeEstimate} object containing information about the fees
+     * @throws BlockIOException
+     */
+    public NetworkFeeEstimate getNetworkFeeEstimate(String address, BigDecimal amount, Priority priority) throws BlockIOException {
+        HashMap<String, BigDecimal> target = new HashMap<String, BigDecimal>(1);
+        target.put(address, amount);
+        return getNetworkFeeEstimate(target, ParamType.ADDRS, priority);
+    }
+    
+    /**
+     * Requests the network fee estimate for transaction
+     * @return An {@link io.block.api.model.NetworkFeeEstimate} object containing the fees
+     * @throws BlockIOException
+     */
+    public NetworkFeeEstimate getNetworkFeeEstimate(Map<String, BigDecimal> targetsAndAmounts, ParamType targetType, Priority priority) throws BlockIOException {
+        if (targetsAndAmounts == null || targetsAndAmounts.size() == 0) {
+            throw new IllegalArgumentException("You have to provide between one and 100 pair(s) of targets and amounts to withdraw to");
+        }
+
+        if (priority == null) {
+            throw new IllegalArgumentException("param 'priority' is null");
+        }
+
+        HashMap<String, String> params = setupWithdrawalParams(targetsAndAmounts, targetType);
+        params.put(Constants.Params.PRIORITY, priority.toString().toLowerCase());
+        
+        Response.NetworkFeeEstimate response = (Response.NetworkFeeEstimate) doApiCall(Constants.Methods.GET_NETWORK_FEE_ESTIMATE, params, Response.NetworkFeeEstimate.class);
+        return response.networkFeeEstimate;
     }
 
     /**

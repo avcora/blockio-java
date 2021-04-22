@@ -29,6 +29,11 @@ public class Response {
         @SerializedName("data")
         public io.block.api.model.AddressByLabel addressByLabel;
     }
+    
+    public class NetworkFeeEstimate extends Response {
+        @SerializedName("data")
+        public io.block.api.model.NetworkFeeEstimate networkFeeEstimate;
+    }
 
     public class ResponseWithdrawal extends Response {
         @SerializedName("data")

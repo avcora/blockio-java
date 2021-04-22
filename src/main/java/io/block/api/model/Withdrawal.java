@@ -17,4 +17,10 @@ public class Withdrawal {
 
     @SerializedName("blockio_fee")
     public String blockIOFee;
+
+    @Override
+    public String toString() {
+        return "Withdrawal{" + "network=" + network + ", txid=" + txid + ", amountWithdrawn=" + amountWithdrawn + ", amountSent=" + amountSent + ", networkFee=" + networkFee + ", blockIOFee=" + blockIOFee + '}';
+    }   
+    
 }
